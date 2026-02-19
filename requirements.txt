@@ -1,7 +1,6 @@
 PyQt6
 keyboard
 psutil 
-ctypes
 loguru
 comtypes
 pycaw

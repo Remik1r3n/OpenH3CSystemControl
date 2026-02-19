@@ -14,10 +14,22 @@ from PyQt6.QtCore import QObject, pyqtSignal, QTimer
 
 from loguru import logger
 from config import *
+from _version import __version__
 from languages.zhcn import *
 from modules.h3c_sound import start_h3c_sound, stop_h3c_sound
 from modules.microphone_control import toggle_microphone, is_microphone_mute
 from modules.check_official_h3ccc import is_official_h3c_control_center_running
+from modules.switch_to_megaos import change_boot_order
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 class KeySignal(QObject):
     """
@@ -63,8 +75,9 @@ class OpenH3CControlCenter:
         self.tray_icon = QSystemTrayIcon()
         
         # Icon
-        if os.path.exists("TrayIcon.png"):
-            self.icon = QIcon("TrayIcon.png")
+        icon_path = resource_path("TrayIcon.png")
+        if os.path.exists(icon_path):
+            self.icon = QIcon(icon_path)
         else:
             # Fallback icon
             self.icon = QIcon.fromTheme("computer")
@@ -98,6 +111,11 @@ class OpenH3CControlCenter:
         self.menu.addAction(self.h3c_action)
 
         self.menu.addSeparator()
+        
+        # About Action
+        about_action = QAction(MENU_ABOUT, self.menu)
+        about_action.triggered.connect(self.handle_about)
+        self.menu.addAction(about_action)
 
         # Close Menu Action
         close_action = QAction(MENU_CLOSE, self.menu)
@@ -149,6 +167,21 @@ class OpenH3CControlCenter:
     def handle_h3c_sound(self):
         """Starts or stops the H3CSound Settings app."""
         start_h3c_sound()
+
+    def handle_about(self):
+        """Shows the About dialog."""
+        msg_box = QMessageBox(self.menu) # Set parent to ensure icon shows in taskbar if needed, or just None.
+        # But since we are tray only, let's just make it top most.
+        msg_box.setWindowTitle(MSG_ABOUT_TITLE)
+        msg_box.setText(MSG_ABOUT_TEXT_TEMPLATE.format(version=__version__))
+        msg_box.setIcon(QMessageBox.Icon.Information)
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+        
+        # Ensure it is on top
+        msg_box.setWindowFlags(msg_box.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
+        msg_box.activateWindow()
+        msg_box.raise_()
+        msg_box.exec()
 
     def handle_mic_key(self):
         """Logic when F20 is pressed."""
@@ -202,9 +235,20 @@ class OpenH3CControlCenter:
         
         if reply == QMessageBox.StandardButton.Yes:
             logger.info("User confirmed MegaOS switch.")
-            from modules.switch_to_megaos import write_h3c_efivar
-            write_h3c_efivar()
-            os.system("shutdown /r /t 30 /fw")
+            boot_order_change_result = change_boot_order()
+            if boot_order_change_result == 0:
+                logger.info("Boot order changed successfully, rebooting...")
+            else:
+                logger.error(f"Failed to change boot order, error code: {boot_order_change_result}.")
+                # Pop up an error message box
+                error_box = QMessageBox()
+                error_box.setWindowFlags(error_box.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
+                error_box.setWindowTitle(MSGBOX_ERROR_TITLE)
+                error_box.setText(MSG_FAILED_TO_SWITCH_MEGAOS + f"\nError code: {boot_order_change_result}")
+                error_box.setIcon(QMessageBox.Icon.Critical)
+                error_box.exec()
+                return
+            os.system("shutdown /r /t 0")
         else:
             logger.info("User canceled MegaOS switch.")
 

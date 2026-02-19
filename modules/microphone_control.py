@@ -5,7 +5,6 @@ from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from loguru import logger
 
-logger.debug("Microphone control module loaded.")
 
 def get_mic_endpoint():
     comtypes.CoInitialize() 
