@@ -18,10 +18,9 @@ MSG_H3CCC_RUNNING = "Official H3C Control Center is running! Please uninstall or
 MSG_TITLE_SWITCH_MEGAOS = "Switch to MegaOS"
 MSG_ARE_YOU_SURE_SWITCH_MEGAOS = "Are you sure you want to switch to MegaOS?"
 MSG_MEGAOS_SWITCH_WILL_REBOOT = "The device will reboot immediately."
-MSG_FAILED_TO_SWITCH_MEGAOS = "Failed to switch MegaOS"
 
 MENU_ABOUT = "About"
 MSG_ABOUT_TITLE = "About Open H3C System Control"
-MSG_ABOUT_TEXT_TEMPLATE = "Open H3C System Control\nVersion: {version}\nAuthor: Remik1r3n\n\nLicense: GPLv3\nGitHub: https://github.com/Remik1r3n/OpenH3CSystemControl"
+MSG_ABOUT_TEXT_TEMPLATE = "Open H3C System Control\nVersion: {version}\nMade by Remik1r3n and other contributors.\n\nLicensed under GPLv3.\nhttps://github.com/Remik1r3n/OpenH3CSystemControl"
 MSG_MEGAOS_SWITCH_NEXT_REBOOT = "You will be switched to MegaOS on the next reboot."
 MSG_FAILED_TO_SWITCH_MEGAOS = "Failed to switch to MegaOS, cannot continue."

@@ -5,8 +5,8 @@ if (Test-Path "dist") { Remove-Item -Recurse -Force "dist" }
 # --- Version generation ---
 $git_tag = git describe --tags --always --dirty 2>$null
 if (-not $?) { 
-    Write-Host "Git describe failed, using '0.0.0-dev'" -ForegroundColor Yellow
-    $git_tag = "0.0.0-dev"
+    Write-Host "Git describe failed, falling back." -ForegroundColor Yellow
+    $git_tag = "x.x.x-unknownbuild"
 } else {
     Write-Host "Building version: $git_tag" -ForegroundColor Cyan
 }
