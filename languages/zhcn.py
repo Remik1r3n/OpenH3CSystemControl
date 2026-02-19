@@ -22,6 +22,6 @@ MSG_FAILED_TO_SWITCH_MEGAOS = "切换 MegaOS 失败"
 
 MENU_ABOUT = "关于"
 MSG_ABOUT_TITLE = "关于 Open H3C System Control"
-MSG_ABOUT_TEXT_TEMPLATE = "Open H3C System Control\n版本: {version}\n作者: Remik1r3n\n\n开源许可: GPLv3\nGitHub: https://github.com/Remik1r3n/OpenH3CSystemControl"
+MSG_ABOUT_TEXT_TEMPLATE = "Open H3C System Control\n版本: {version}\nMade by Remik1r3n, and other contributors.\n\n开源许可: GPLv3\nGitHub: https://github.com/Remik1r3n/OpenH3CSystemControl"
 MSG_MEGAOS_SWITCH_NEXT_REBOOT = "将在下一次重启时切换到 MegaOS。"
 MSG_FAILED_TO_SWITCH_MEGAOS = "切换到 MegaOS 时出错，无法继续。"
