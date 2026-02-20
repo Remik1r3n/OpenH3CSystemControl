@@ -7,11 +7,14 @@ This open-source implementation is written in Python using PyQt6 and aims to pro
 
 We tries to replicate the original app's functionality as closely as possible. It creates a system tray icon with a menu to access these features, and runs in the background to handle key events.
 
-## Supported OS
+## Supported Environments
+This app is intended to run on the following operating systems:
 - Windows 10 (not recommended)
 - Windows 11 (recommended)
 
 Although not very difficult, I don't think it's necessary to adapt this app to Linux.
+
+This app must be run with administrator privileges.
 
 ## Features
 - Enable/Disable Microphone key support (F20 actually)

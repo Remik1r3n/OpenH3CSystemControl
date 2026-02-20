@@ -1,6 +1,6 @@
 # Open H3C 控制中心
 
-[Read this document in English](README-en.md)
+    [Read this document in English](README-en.md)
 
 这是 H3C Megabook 设备上 H3C 系统控制中心应用程序的开源实现。
 
@@ -10,11 +10,16 @@
 
 我们尝试尽可能地复制原始应用程序的功能。
 
-## 支持的操作系统
-- Windows 10（虽然支持，但是非常不建议）
+## 运行环境
+需要在以下操作系统运行。
 - Windows 11（建议）
+- Windows 10（虽然支持，但是非常不建议）
 
 虽然并不困难，但我不认为这个应用程序有必要适配 Linux。
+
+本程序必须需要管理员权限运行。
+
+另外，本程序在官方 H3C 控制中心运行时，也不能运行。你可以使用本仓库里面的 `StopOfficialH3CSysCtrl.bat` 来禁用它。通过这个脚本禁用是安全的，你可以随时重新启用。
 
 ## 功能
 - 启用/禁用麦克风键支持（本质上是 F20）
