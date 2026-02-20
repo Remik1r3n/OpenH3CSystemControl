@@ -2,6 +2,7 @@
 
 Rule:
 - If the system language is Chinese (any locale starting with "zh"), use Simplified Chinese strings.
+- If the system language is Japanese (any locale starting with "ja"), use Japanese strings.
 - Otherwise, use English strings.
 
 This module is intentionally dependency-free and safe to import early.
@@ -36,11 +37,13 @@ def _windows_user_default_locale_name() -> Optional[str]:
 
 
 def _normalize_lang_tag(tag: str) -> str:
-    # Examples we may see: 'zh_CN', 'zh-CN', 'Chinese (Simplified)_China'
+    # Examples we may see: 'zh_CN', 'zh-CN', 'ja_JP', 'Japanese_Japan', 'Chinese (Simplified)_China'
     tag = tag.strip().replace("_", "-").lower()
     # Some Windows APIs / envs can return descriptive names; keep a cheap heuristic.
     if tag.startswith("chinese"):
         return "zh"
+    if tag.startswith("japanese"):
+        return "ja"
     return tag
 
 
@@ -80,8 +83,20 @@ def is_system_language_chinese() -> bool:
     return False
 
 
+def is_system_language_japanese() -> bool:
+    for raw_tag in _iter_system_language_candidates():
+        tag = _normalize_lang_tag(raw_tag)
+        if tag.startswith("ja"):
+            return True
+    return False
+
+
 def get_language_module_name() -> str:
-    return "languages.zhcn" if is_system_language_chinese() else "languages.en"
+    if is_system_language_chinese():
+        return "languages.zhcn"
+    if is_system_language_japanese():
+        return "languages.ja"
+    return "languages.en"
 
 
 def apply_language(target_globals: Dict[str, Any]) -> str:

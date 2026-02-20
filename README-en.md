@@ -1,4 +1,6 @@
 # Open H3C System Control
+
+## Overview
 This is a open-source implementation of H3C System Control Center App, found on H3C Megabook device.
 
 Original H3C System Control Center app is a buggy .NET app that sometimes delays startup and shutdown (Displays as .NET-BroadcastEventWindow.bf7771.0). 
@@ -29,6 +31,9 @@ This software is provided "as is", without any warranty. Use it at your own risk
 You must have read all the code and understand what it does before using it.
 
 AI assistance was used in the process of writing the code.
+
+## Multi-language Support
+Currently supports Chinese, English and Japanese.
 
 ## License
 This project is licensed under the GPL V3 License.

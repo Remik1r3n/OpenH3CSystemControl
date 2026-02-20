@@ -1,17 +1,19 @@
 <#
 .SYNOPSIS
-    查找指定的 UEFI 启动项并将其移动到 BootOrder 的第一位。
+    Finds a specified UEFI boot entry and moves it to the first position in BootOrder.
 
 .DESCRIPTION
-    此脚本解析 bcdedit /enum firmware 的输出，查找匹配描述的启动项，
-    并使用 bcdedit /set {fwbootmgr} displayorder ... /addfirst 将其置顶。
+        This script parses the output of `bcdedit /enum firmware` to find a boot entry
+        with a matching description, then uses:
+            bcdedit /set {fwbootmgr} displayorder ... /addfirst
+        to move it to the top.
 
 .EXIT CODES
-    0 - 成功 (Success)
-    1 - 需要管理员权限 (Admin Rights Required)
-    2 - 未找到指定名称的启动项 (Target Not Found)
-    3 - 设置启动顺序失败 (Failed to Set Order)
-    4 - 未知错误 (Unknown Error)
+    0 - Success
+    1 - Admin rights required
+    2 - Target not found
+    3 - Failed to set boot order
+    4 - Unknown error
 #>
 
 param (
@@ -23,7 +25,7 @@ $currentPrincipal = [Security.Principal.WindowsPrincipal][Security.Principal.Win
 $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
 if (-not $isAdmin) {
-    Write-Error "Admin needed"
+    Write-Error "Administrator privileges are required."
     exit 1
 }
 
@@ -34,7 +36,7 @@ try {
     # Get output as an array of lines
     $bcdOutputLines = bcdedit /enum firmware /v
 } catch {
-    Write-Error "Can't execute bcdedit!"
+    Write-Error "Failed to execute 'bcdedit'."
     exit 4
 }
 
@@ -62,7 +64,7 @@ foreach ($entry in $entries) {
 if ([string]::IsNullOrEmpty($targetGuid)) {
     # Debug info: verify we are actually parsing content
     Write-Warning "Parsed $($entries.Count) entries, but '$TargetDescription' was not found."
-    Write-Warning "Ensure the description matches exactly (case-insensitive)."
+    Write-Warning "Ensure the description matches (case-insensitive)."
     exit 2
 }
 
@@ -79,6 +81,6 @@ if ($proc.ExitCode -eq 0) {
     [Console]::WriteLine("")
     exit 0
 } else {
-    Write-Error "ERROR! ExitCode: $($proc.ExitCode)"
+    Write-Error "Failed. ExitCode: $($proc.ExitCode)"
     exit 3
 }

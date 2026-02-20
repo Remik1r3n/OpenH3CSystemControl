@@ -1,6 +1,7 @@
 # Open H3C 控制中心
 
-Read this document in [English](README-en.md)
+[Read this document in English](README-en.md)
+[このドキュメントの日本語版を読む](README-ja.md)
 
 ## 概述
 
@@ -36,6 +37,9 @@ Read this document in [English](README-en.md)
 您必须在使用本软件之前，阅读所有代码，了解其所有功能。
 
 编写代码的过程中有使用 AI 辅助。
+
+## 语言支持
+目前提供中文，英文和日文支持。
 
 ## 许可证
 本项目采用 GPL V3 许可证。
