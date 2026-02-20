@@ -20,6 +20,7 @@ from modules.h3c_sound import start_h3c_sound, stop_h3c_sound
 from modules.microphone_control import toggle_microphone, is_microphone_mute
 from modules.check_official_h3ccc import is_official_h3c_control_center_running
 from modules.switch_to_megaos import change_boot_order
+from modules.single_instance import SingleInstance
 
 # Load language constants based on system language.
 _selected_language_module = apply_language(globals())
@@ -280,6 +281,22 @@ class OpenH3CControlCenter:
 if __name__ == "__main__":
     try:
         logger.info("Open H3C System Control starting...")
+
+        # Prevent multiple instances.
+        _single_instance_lock = SingleInstance("OpenH3CSystemControl")
+        if not _single_instance_lock.acquire():
+            logger.warning("Another instance is already running; exiting.")
+            try:
+                msg = globals().get("MSG_ALREADY_RUNNING")
+                title = globals().get("MSGBOX_ERROR_TITLE")
+                if sys.platform == "win32":
+                    ctypes.windll.user32.MessageBoxW(0, msg, title, 0x00000040)  # MB_ICONINFORMATION
+                else:
+                    print(msg)
+            except Exception:
+                pass
+            sys.exit(0)
+
         control_center = OpenH3CControlCenter()
         control_center.run()
     except KeyboardInterrupt:

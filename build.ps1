@@ -18,7 +18,31 @@ Write-Host "Building OpenH3CSystemControl..."
 pyinstaller OpenH3CSystemControl.spec
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "Build successful!" -ForegroundColor Green
+    Write-Host "PyInstaller Build successful!" -ForegroundColor Green
+    
+    # Check for Inno Setup compiler
+    $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+    if (-not (Test-Path $iscc)) {
+        # Try to find ISCC in PATH or alternative location if needed
+        $iscc = Get-Command "ISCC.exe" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
+    }
+
+    if ($iscc -and (Test-Path $iscc)) {
+        Write-Host "Building Installer with Inno Setup..." -ForegroundColor Cyan
+        $env:VERSION = $git_tag
+        & $iscc "Setup.iss" /Q
+        
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "Installer Build successful!" -ForegroundColor Green
+        } else {
+            Write-Host "Installer Build failed!" -ForegroundColor Red
+            exit 1
+        }
+    } else {
+        Write-Host "Inno Setup compiler (ISCC.exe) not found. Skipping installer build." -ForegroundColor Yellow
+        Write-Host "Please install Inno Setup 6 to build the installer."
+    }
 } else {
     Write-Host "Build failed!" -ForegroundColor Red
+    exit 1
 }

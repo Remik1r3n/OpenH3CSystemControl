@@ -15,6 +15,8 @@ MSG_MICROPHONE_TOGGLED_OFF = "Microphone: OFF"
 
 MSG_H3CCC_RUNNING = "Official H3C Control Center is running! Please uninstall or close it before using this app. For more informations, please check the GitHub page."
 
+MSG_ALREADY_RUNNING = "Open H3C System Control is already running."
+
 MSG_TITLE_SWITCH_MEGAOS = "Switch to MegaOS"
 MSG_ARE_YOU_SURE_SWITCH_MEGAOS = "Are you sure you want to switch to MegaOS?"
 MSG_MEGAOS_SWITCH_WILL_REBOOT = "The device will reboot immediately."

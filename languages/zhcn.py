@@ -15,6 +15,8 @@ MSG_MICROPHONE_TOGGLED_OFF = "麦克风：禁用"
 
 MSG_H3CCC_RUNNING = "检测到官方 H3C 控制中心正在运行！请先卸载或关闭它，然后才能使用此程序。若需要更多支持，请查看 GitHub 页面。"
 
+MSG_ALREADY_RUNNING = "Open H3C 系统控制中心已在运行。"
+
 MSG_TITLE_SWITCH_MEGAOS = "切换到 MegaOS"
 MSG_ARE_YOU_SURE_SWITCH_MEGAOS = "确定要切换到 MegaOS 吗？"
 MSG_MEGAOS_SWITCH_WILL_REBOOT = "设备将立即重启。"

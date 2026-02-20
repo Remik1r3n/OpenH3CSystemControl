@@ -44,6 +44,9 @@ jobs:
         with:
           install-only: true
 
+      - name: Install Inno Setup
+        run: choco install innosetup
+
       - name: Build with PowerShell script
         shell: powershell
         run: .\build.ps1 -ErrorAction Stop
@@ -52,7 +55,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: OpenH3CSystemControl
-          path: dist/OpenH3CSystemControl.exe
+          path: |
+            dist/OpenH3CSystemControl.exe
+            dist/OpenH3CSystemControl_Setup_x64.exe
           if-no-files-found: error
 
   release:
@@ -74,7 +79,9 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: output/OpenH3CSystemControl.exe
+          files: |
+            output/OpenH3CSystemControl.exe
+            output/OpenH3CSystemControl_Setup_x64.exe
           generate_release_notes: true
           draft: false
           prerelease: false
