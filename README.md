@@ -2,6 +2,8 @@
 
 Read this document in [English](README-en.md)
 
+## 概述
+
 这是 H3C Megabook 设备上 H3C 系统控制中心应用程序的开源实现。
 
 原版 H3C 系统控制中心应用程序是一个存在诸多问题的 .NET 应用程序，有时会拖慢开机和关机（显示为 .NET-BroadcastEventWindow.bf7771.0）。
