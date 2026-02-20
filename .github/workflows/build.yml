@@ -45,7 +45,7 @@ jobs:
           install-only: true
 
       - name: Install Inno Setup
-        run: choco install innosetup
+        run: choco install innosetup -y --no-progress
 
       - name: Build with PowerShell script
         shell: powershell

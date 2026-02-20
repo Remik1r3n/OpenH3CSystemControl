@@ -28,5 +28,7 @@ This software is provided "as is", without any warranty. Use it at your own risk
 
 You must have read all the code and understand what it does before using it.
 
+AI assistance was used in the process of writing the code.
+
 ## License
 This project is licensed under the GPL V3 License.
