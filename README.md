@@ -1,6 +1,6 @@
 # Open H3C 控制中心
 
-    [Read this document in English](README-en.md)
+Read this document in [English](README-en.md)
 
 这是 H3C Megabook 设备上 H3C 系统控制中心应用程序的开源实现。
 
