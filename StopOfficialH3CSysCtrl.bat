@@ -27,6 +27,6 @@ taskkill /f /im SystemControl.exe
 
 echo.
 echo Done! if you need H3C Control Center again, 
-echo Please use %H3CSCPath%\serviceInstall.bat.
+echo Simply run %H3CSCPath%\serviceInstall.bat as admin and reboot.
 echo.
 pause

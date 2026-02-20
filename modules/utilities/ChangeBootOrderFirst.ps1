@@ -18,7 +18,7 @@ param (
     [string]$TargetDescription = "MegaOS"
 )
 
-# --- 1. 检查管理员权限 ---
+# Step 1: Check for admin rights
 $currentPrincipal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
 $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
@@ -29,7 +29,7 @@ if (-not $isAdmin) {
 
 Write-Host "Searching for '$TargetDescription'..." -ForegroundColor Cyan
 
-# --- 2. 获取并解析固件数据 ---
+# Step 2: Execute bcdedit and parse output
 try {
     # Get output as an array of lines
     $bcdOutputLines = bcdedit /enum firmware /v
@@ -58,7 +58,7 @@ foreach ($entry in $entries) {
     }
 }
 
-# --- 3. 验证是否找到 ---
+# Step 3: Check if we found the target entry
 if ([string]::IsNullOrEmpty($targetGuid)) {
     # Debug info: verify we are actually parsing content
     Write-Warning "Parsed $($entries.Count) entries, but '$TargetDescription' was not found."
@@ -68,11 +68,10 @@ if ([string]::IsNullOrEmpty($targetGuid)) {
 
 Write-Host "Found! GUID: $targetGuid" -ForegroundColor Green
 
-# --- 4. 修改启动顺序 ---
+# Step 4: Move the target entry to the first position in the firmware boot order
 Write-Host "Changing it to first..." -ForegroundColor Cyan
 
-# {fwbootmgr} 代表 UEFI BootOrder
-# /addfirst 确保它被移到列表的最顶端
+# {fwbootmgr} is UEFI BootOrder
 $proc = Start-Process -FilePath "bcdedit.exe" -ArgumentList "/set `"{fwbootmgr}`" displayorder `"$targetGuid`" /addfirst" -PassThru -Wait -NoNewWindow
 
 if ($proc.ExitCode -eq 0) {

@@ -15,11 +15,15 @@ from PyQt6.QtCore import QObject, pyqtSignal, QTimer
 from loguru import logger
 from config import *
 from _version import __version__
-from languages.zhcn import *
+from languages.auto import apply_language
 from modules.h3c_sound import start_h3c_sound, stop_h3c_sound
 from modules.microphone_control import toggle_microphone, is_microphone_mute
 from modules.check_official_h3ccc import is_official_h3c_control_center_running
 from modules.switch_to_megaos import change_boot_order
+
+# Load language constants based on system language.
+_selected_language_module = apply_language(globals())
+logger.info(f"Language module selected: {_selected_language_module}")
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """

@@ -30,6 +30,7 @@ def change_boot_order(is_run_as_admin:bool=False):
         
         # Note: When running with Start-Process, we might not get the script's exit code directly
         # checking result.returncode checks if the launch was successful.
+        # So it's not recommended you to use is_run_as_admin=True
         if result.returncode == 0:
             print("Run Success")
             print("Output:", result.stdout)
@@ -46,7 +47,8 @@ def change_boot_order(is_run_as_admin:bool=False):
 def write_h3c_efivar():
     '''
     I have no idea what is it, but original app writes this.
-    It's not used for switching to MegaOS, but I will keep it here just in case someone wants to use it.
+    It's not used for switching to MegaOS, 
+    but I will keep it here, just in case someone wants to use it.
     '''
     args = "BscInstallSystem@e896daf2-380d-4c77-aacb-098efbc05c9d@01"
     
