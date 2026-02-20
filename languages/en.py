@@ -10,8 +10,8 @@ MENU_H3C_SOUND_SETTINGS = "H3CSound Settings UI"
 MSGBOX_ERROR_TITLE = "Error"
 
 MSG_MICROPHONE_TOGGLE = "Microphone Control"
-MSG_MICROPHONE_TOGGLED_ON = "Microphone: ON"
-MSG_MICROPHONE_TOGGLED_OFF = "Microphone: OFF"
+MSG_MICROPHONE_TOGGLED_ON = "✅ Microphone: ON"
+MSG_MICROPHONE_TOGGLED_OFF = "🚫 Microphone: OFF"
 
 MSG_H3CCC_RUNNING = "Official H3C Control Center is running! Please uninstall or close it before using this app. For more informations, please check the GitHub page."
 

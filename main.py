@@ -203,7 +203,7 @@ class OpenH3CControlCenter:
                 self.tray_icon.showMessage(
                     MSG_MICROPHONE_TOGGLED_OFF,
                     MSG_MICROPHONE_TOGGLE,
-                    QSystemTrayIcon.MessageIcon.Critical,
+                    QSystemTrayIcon.MessageIcon.Information,
                     2000
                 )
             else:

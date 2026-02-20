@@ -10,8 +10,8 @@ MENU_H3C_SOUND_SETTINGS = "启动 H3CSound 设置界面"
 MSGBOX_ERROR_TITLE = "错误"
 
 MSG_MICROPHONE_TOGGLE = "麦克风控制"
-MSG_MICROPHONE_TOGGLED_ON = "麦克风：启用"
-MSG_MICROPHONE_TOGGLED_OFF = "麦克风：禁用"
+MSG_MICROPHONE_TOGGLED_ON = "✅ 麦克风：启用"
+MSG_MICROPHONE_TOGGLED_OFF = "🚫 麦克风：禁用"
 
 MSG_H3CCC_RUNNING = "检测到官方 H3C 控制中心正在运行！请先卸载或关闭它，然后才能使用此程序。若需要更多支持，请查看 GitHub 页面。"
 
