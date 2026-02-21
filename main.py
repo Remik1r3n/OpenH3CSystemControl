@@ -22,6 +22,25 @@ from modules.check_official_h3ccc import is_official_h3c_control_center_running
 from modules.switch_to_megaos import change_boot_order
 from modules.single_instance import SingleInstance
 
+
+def _set_safe_working_directory() -> None:
+    """Set a stable working directory.
+
+    When launched by Task Scheduler at logon, the working directory is often
+    `C:\\Windows\\System32`, which can break relative file lookups.
+    """
+    try:
+        if getattr(sys, "frozen", False):
+            app_dir = os.path.dirname(sys.executable)
+        else:
+            app_dir = os.path.dirname(os.path.abspath(__file__))
+
+        if app_dir:
+            os.chdir(app_dir)
+    except Exception:
+        # Never block startup due to CWD issues.
+        pass
+
 # Load language constants based on system language.
 _selected_language_module = apply_language(globals())
 logger.info(f"Language module selected: {_selected_language_module}")
@@ -305,6 +324,8 @@ class OpenH3CControlCenter:
 if __name__ == "__main__":
     try:
         logger.info("Open H3C System Control starting...")
+
+        _set_safe_working_directory()
 
         # Prevent multiple instances.
         _single_instance_lock = SingleInstance("OpenH3CSystemControl")

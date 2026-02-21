@@ -64,6 +64,33 @@ begin
   Result := ExpandConstant('{sys}\schtasks.exe');
 end;
 
+function PowerShellExe(): String;
+begin
+  // Avoid relying on PATH at logon.
+  Result := ExpandConstant('{sys}\WindowsPowerShell\v1.0\powershell.exe');
+end;
+
+function QuoteForPowerShellSingle(const S: String): String;
+begin
+  // Escape single quotes for PowerShell single-quoted strings.
+  Result := StringChange(S, '''', '''''');
+end;
+
+function BuildTaskRunnerCommand(const AppPath: String): String;
+var
+  AppDir: String;
+begin
+  // Start the app with an explicit working directory.
+  // Scheduled tasks frequently start in System32, which can break relative-path lookups.
+  AppDir := ExtractFileDir(AppPath);
+
+  // Use PowerShell Start-Process to set WorkingDirectory and avoid flashing a console.
+  // We single-quote paths to keep quoting rules predictable.
+  Result := '"' + PowerShellExe() + '" -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden '
+    + '-Command "Start-Process -FilePath ''' + QuoteForPowerShellSingle(AppPath)
+    + ''' -WorkingDirectory ''' + QuoteForPowerShellSingle(AppDir) + '''"';
+end;
+
 procedure DeleteScheduledTaskIfExists(const TaskName: String);
 var
   ResultCode: Integer;
@@ -78,9 +105,20 @@ var
 begin
   // Note: With schtasks.exe and no explicit /RU, the task is created for the current user.
   // Delay a bit so Explorer/System Tray is fully up; otherwise tray-only apps can appear to "not start".
-  // Quote AppPath for robust parsing when installed under "Program Files".
-    Params := '/Create /F /SC ONLOGON /DELAY 0000:10 /RL HIGHEST /TN "' + TaskName + '" /TR "' + AppPath + '"';
+  // /IT: run only when the user is logged on (interactive), required for tray apps.
+  // Use a runner that sets WorkingDirectory explicitly.
+  Params := '/Create /F /SC ONLOGON /DELAY 0000:10 /RL HIGHEST /IT '
+    + '/TN "' + TaskName + '" /TR "' + BuildTaskRunnerCommand(AppPath) + '"';
   Result := ExecCommand(SchedTasksExe(), Params, ResultCode);
+
+  // Some configurations reject /IT unless /RU is explicitly specified.
+  // Retry without /IT to avoid breaking the install flow.
+  if not Result then
+  begin
+    Params := '/Create /F /SC ONLOGON /DELAY 0000:10 /RL HIGHEST '
+      + '/TN "' + TaskName + '" /TR "' + BuildTaskRunnerCommand(AppPath) + '"';
+    Result := ExecCommand(SchedTasksExe(), Params, ResultCode);
+  end;
 
   if not Result then
     MsgBox('Failed to create startup task. Error code: ' + IntToStr(ResultCode), mbError, MB_OK);
