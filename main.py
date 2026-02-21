@@ -41,6 +41,9 @@ def _set_safe_working_directory() -> None:
         # Never block startup due to CWD issues.
         pass
 
+
+_set_safe_working_directory()
+
 # Load language constants based on system language.
 _selected_language_module = apply_language(globals())
 logger.info(f"Language module selected: {_selected_language_module}")
@@ -75,7 +78,7 @@ def resource_path(relative_path):
         # PyInstaller creates a temp folder and stores path in _MEIPASS
         base_path = sys._MEIPASS
     except Exception:
-        base_path = os.path.abspath(".")
+        base_path = os.path.dirname(os.path.abspath(__file__))
 
     return os.path.join(base_path, relative_path)
 
