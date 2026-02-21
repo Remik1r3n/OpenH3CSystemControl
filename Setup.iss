@@ -59,6 +59,27 @@ begin
   Result := (ResultCode = 0);
 end;
 
+function HexDigit(const N: Integer): Char;
+begin
+  if N < 10 then
+    Result := Chr(Ord('0') + N)
+  else
+    Result := Chr(Ord('A') + (N - 10));
+end;
+
+function UInt32ToHex8(const Value: Cardinal): String;
+var
+  I: Integer;
+  Nibble: Integer;
+begin
+  Result := '';
+  for I := 7 downto 0 do
+  begin
+    Nibble := (Value shr (I * 4)) and $F;
+    Result := Result + HexDigit(Nibble);
+  end;
+end;
+
 function SchedTasksExe(): String;
 begin
   Result := ExpandConstant('{sys}\schtasks.exe');
@@ -96,7 +117,7 @@ begin
   if not Result then
     MsgBox(
       'Failed to create startup task. Error code: ' + IntToStr(ResultCode)
-      + ' (0x' + IntToHex(Cardinal(ResultCode), 8) + ')',
+      + ' (0x' + UInt32ToHex8(Cardinal(ResultCode)) + ')',
       mbError,
       MB_OK
     );
