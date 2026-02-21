@@ -7,7 +7,7 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{2A8E9A34-5B6C-4D7E-8F90-123456789ABC}
+AppId={{3669316D-B63C-4F9F-9FE8-A30669D56A3D}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -77,7 +77,9 @@ var
   ResultCode: Integer;
 begin
   // Note: With schtasks.exe and no explicit /RU, the task is created for the current user.
-  Params := '/Create /F /SC ONLOGON /RL HIGHEST /TN "' + TaskName + '" /TR "' + AppPath + '"';
+  // Delay a bit so Explorer/System Tray is fully up; otherwise tray-only apps can appear to "not start".
+  // Quote AppPath for robust parsing when installed under "Program Files".
+    Params := '/Create /F /SC ONLOGON /DELAY 0000:10 /RL HIGHEST /TN "' + TaskName + '" /TR "' + AppPath + '"';
   Result := ExecCommand(SchedTasksExe(), Params, ResultCode);
 
   if not Result then

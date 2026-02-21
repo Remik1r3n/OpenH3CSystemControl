@@ -17,8 +17,46 @@ from importlib import import_module
 from typing import Any, Dict, Iterable, Optional
 
 
+_MUI_LANGUAGE_NAME = 0x00000008  # Prefer BCP-47 tags like "ja-JP".
+
+
+def _windows_user_preferred_ui_languages() -> list[str]:
+    """Return user preferred Windows UI language tags (e.g. ['ja-JP', 'en-US']).
+
+    This is more accurate for UI language than user locale/region settings.
+    Returns an empty list if unavailable.
+    """
+    if os.name != "nt":
+        return []
+
+    try:
+        kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
+        fn = getattr(kernel32, "GetUserPreferredUILanguages", None)
+        if not fn:
+            return []
+
+        num_langs = ctypes.c_ulong(0)
+        buffer_len = ctypes.c_ulong(0)
+
+        # First call: get required buffer length (in WCHARs) for MULTI_SZ.
+        if not fn(_MUI_LANGUAGE_NAME, ctypes.byref(num_langs), None, ctypes.byref(buffer_len)):
+            return []
+        if buffer_len.value <= 0:
+            return []
+
+        buffer = ctypes.create_unicode_buffer(buffer_len.value)
+        if not fn(_MUI_LANGUAGE_NAME, ctypes.byref(num_langs), buffer, ctypes.byref(buffer_len)):
+            return []
+
+        # MULTI_SZ: null-separated strings ending with double null.
+        multi = ctypes.wstring_at(buffer, buffer_len.value)
+        return [part for part in multi.split("\x00") if part]
+    except Exception:
+        return []
+
+
 def _windows_user_default_locale_name() -> Optional[str]:
-    """Return a BCP-47-ish locale name like 'zh-CN' on Windows, else None."""
+    """Return a BCP-47-ish *locale* name like 'zh-CN' on Windows, else None."""
     if os.name != "nt":
         return None
 
@@ -37,23 +75,44 @@ def _windows_user_default_locale_name() -> Optional[str]:
 
 
 def _normalize_lang_tag(tag: str) -> str:
-    # Examples we may see: 'zh_CN', 'zh-CN', 'ja_JP', 'Japanese_Japan', 'Chinese (Simplified)_China'
-    tag = tag.strip().replace("_", "-").lower()
+    # Examples we may see:
+    # - 'zh_CN', 'zh-CN', 'ja_JP', 'ja_JP.UTF-8'
+    # - 'Japanese_Japan', 'Chinese (Simplified)_China'
+    # - 'ja-JP-u-ca-japanese' (BCP-47 with extensions)
+    tag = tag.strip()
+    if not tag:
+        return ""
+
+    # Strip common encoding / modifier suffixes: 'ja_JP.UTF-8@foo' -> 'ja_JP'
+    tag = tag.split("@", 1)[0]
+    tag = tag.split(".", 1)[0]
+
+    tag = tag.replace("_", "-").lower()
+
     # Some Windows APIs / envs can return descriptive names; keep a cheap heuristic.
     if tag.startswith("chinese"):
         return "zh"
     if tag.startswith("japanese"):
         return "ja"
+
+    # Rare shorthands.
+    if tag in {"jp", "jpn"}:
+        return "ja"
+
     return tag
 
 
 def _iter_system_language_candidates() -> Iterable[str]:
-    # 1) Windows UI locale name (most reliable for this app)
-    win_tag = _windows_user_default_locale_name()
-    if win_tag:
-        yield win_tag
+    # 1) Windows UI language (most reliable for this app on Windows)
+    for ui_tag in _windows_user_preferred_ui_languages():
+        yield ui_tag
 
-    # 2) Python locale (may be influenced by user settings / env)
+    # 2) Windows locale/region format (can differ from UI language)
+    win_locale = _windows_user_default_locale_name()
+    if win_locale:
+        yield win_locale
+
+    # 3) Python locale (may be influenced by user settings / env)
     try:
         loc = locale.getlocale()[0]
         if loc:
@@ -68,7 +127,7 @@ def _iter_system_language_candidates() -> Iterable[str]:
     except Exception:
         pass
 
-    # 3) Environment variables (common on non-Windows; harmless on Windows)
+    # 4) Environment variables (common on non-Windows; harmless on Windows)
     for key in ("LC_ALL", "LC_MESSAGES", "LANG"):
         value = os.environ.get(key)
         if value:
@@ -76,26 +135,25 @@ def _iter_system_language_candidates() -> Iterable[str]:
 
 
 def is_system_language_chinese() -> bool:
-    for raw_tag in _iter_system_language_candidates():
-        tag = _normalize_lang_tag(raw_tag)
-        if tag.startswith("zh"):
-            return True
-    return False
+    return get_language_module_name() == "languages.zhcn"
 
 
 def is_system_language_japanese() -> bool:
-    for raw_tag in _iter_system_language_candidates():
-        tag = _normalize_lang_tag(raw_tag)
-        if tag.startswith("ja"):
-            return True
-    return False
+    return get_language_module_name() == "languages.ja"
 
 
 def get_language_module_name() -> str:
-    if is_system_language_chinese():
-        return "languages.zhcn"
-    if is_system_language_japanese():
-        return "languages.ja"
+    # Select based on the *first* matching language candidate.
+    # This avoids a common Windows pitfall where secondary languages (e.g. an IME)
+    # would otherwise override the primary UI language.
+    for raw_tag in _iter_system_language_candidates():
+        tag = _normalize_lang_tag(raw_tag)
+        if not tag:
+            continue
+        if tag.startswith("zh"):
+            return "languages.zhcn"
+        if tag.startswith("ja"):
+            return "languages.ja"
     return "languages.en"
 
 

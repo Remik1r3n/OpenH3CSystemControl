@@ -1,6 +1,7 @@
 # Open H3C 控制中心
 
 [Read this document in English](README-en.md)
+
 [このドキュメントの日本語版を読む](README-ja.md)
 
 ## 概述

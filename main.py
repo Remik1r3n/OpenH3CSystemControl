@@ -26,6 +26,30 @@ from modules.single_instance import SingleInstance
 _selected_language_module = apply_language(globals())
 logger.info(f"Language module selected: {_selected_language_module}")
 
+def show_startup_blocking_error(title: str, message: str) -> None:
+    """Show a startup error in a way that is visible at logon on Windows."""
+    if sys.platform == "win32":
+        try:
+            MB_OK = 0x00000000
+            MB_ICONERROR = 0x00000010
+            MB_SETFOREGROUND = 0x00010000
+            MB_TOPMOST = 0x00040000
+            ctypes.windll.user32.MessageBoxW(
+                0,
+                str(message),
+                str(title),
+                MB_OK | MB_ICONERROR | MB_SETFOREGROUND | MB_TOPMOST,
+            )
+            return
+        except Exception:
+            pass
+
+    try:
+        QMessageBox.critical(None, title, message)
+    except Exception:
+        # As a last resort, avoid crashing during error handling.
+        print(f"{title}: {message}")
+
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
@@ -50,7 +74,7 @@ class OpenH3CControlCenter:
         self.app = QApplication(sys.argv)
         if not IS_SKIP_H3CCC_CHECK:
             if is_official_h3c_control_center_running():
-                QMessageBox.critical(None, MSGBOX_ERROR_TITLE, MSG_H3CCC_RUNNING)
+                show_startup_blocking_error(MSGBOX_ERROR_TITLE, MSG_H3CCC_RUNNING)
                 sys.exit(1)
             else:
                 logger.info("Official H3C Control Center not running, so continue.")
