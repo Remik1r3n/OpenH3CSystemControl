@@ -109,8 +109,9 @@ begin
   // Note: With schtasks.exe and no explicit /RU, the task is created for the current user.
   // Delay a bit so Explorer/System Tray is fully up; otherwise tray-only apps can appear to "not start".
   // Use a simple /TR to avoid nested quoting issues.
-  // /RL LIMITED is typically sufficient for a tray app and avoids environments that reject HIGHEST without explicit credentials.
-  Params := '/Create /F /SC ONLOGON /DELAY 0000:10 /RL LIMITED '
+  // The app requires admin privileges, so the task must run elevated.
+  // /RL HIGHEST uses the current user but requests the elevated token at run time.
+  Params := '/Create /F /SC ONLOGON /DELAY 0000:10 /RL HIGHEST '
     + '/TN "' + TaskName + '" /TR "' + BuildTaskRunnerCommand(AppPath) + '"';
   Result := ExecCommand(SchedTasksExe(), Params, ResultCode);
 
