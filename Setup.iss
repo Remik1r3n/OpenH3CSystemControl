@@ -73,7 +73,8 @@ end;
 function QuoteForPowerShellSingle(const S: String): String;
 begin
   // Escape single quotes for PowerShell single-quoted strings.
-  Result := StringChange(S, '''', '''''');
+  Result := S;
+  StringChange(Result, '''', '''''');
 end;
 
 function BuildTaskRunnerCommand(const AppPath: String): String;
