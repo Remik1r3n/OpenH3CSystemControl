@@ -1,5 +1,7 @@
 # Localization: Chinese (Simplified)
 
+# Contributors: Remik1r3n
+
 MENU_TRAY_TOOLTIP = "Open H3C 系统控制中心"
 MENU_TITLE = "控制中心"
 MENU_TOGGLE_MIC = "切换麦克风状态 (F20)"

@@ -28,7 +28,7 @@ Note: "Linsee AI Key" is actually F13, but support for this key will not be adde
 ## Disclaimer
 This software is provided "as is", without any warranty. Use it at your own risk. The author is not responsible for any damage or data loss that may occur from using this software.
 
-You must have read all the code and understand what it does before using it.
+You must have read all the code and understand what it does before using it. Otherwise, please don't ask for support.
 
 AI assistance was used in the process of writing the code.
 

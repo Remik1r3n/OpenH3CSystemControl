@@ -15,7 +15,7 @@ from PyQt6.QtCore import QObject, pyqtSignal, QTimer
 from loguru import logger
 from config import *
 from _version import __version__
-from languages.auto import apply_language
+from languages.manager import apply_language
 from modules.h3c_sound import start_h3c_sound, stop_h3c_sound
 from modules.microphone_control import toggle_microphone, is_microphone_mute
 from modules.check_official_h3ccc import is_official_h3c_control_center_running

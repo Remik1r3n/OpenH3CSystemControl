@@ -135,7 +135,7 @@ def _iter_system_language_candidates() -> Iterable[str]:
 
 
 def is_system_language_chinese() -> bool:
-    return get_language_module_name() == "languages.zhcn"
+    return get_language_module_name() == "languages.zh_CN"
 
 
 def is_system_language_japanese() -> bool:
@@ -151,7 +151,7 @@ def get_language_module_name() -> str:
         if not tag:
             continue
         if tag.startswith("zh"):
-            return "languages.zhcn"
+            return "languages.zh_CN"
         if tag.startswith("ja"):
             return "languages.ja"
     return "languages.en"
@@ -160,7 +160,7 @@ def get_language_module_name() -> str:
 def apply_language(target_globals: Dict[str, Any]) -> str:
     """Load language constants and inject into target_globals.
 
-    Returns the imported module name (e.g. 'languages.zhcn').
+    Returns the imported module name (e.g. 'languages.zh_CN').
     """
     module_name = get_language_module_name()
     module = import_module(module_name)

@@ -6,7 +6,7 @@ uefi_var_tool_path = Path(__file__).parent.joinpath("utilities", "UEFIVariableTo
 
 bootorder_change_tool_path = Path(__file__).parent.joinpath("utilities", "ChangeBootOrderFirst.ps1").resolve()
 
-def change_boot_order(is_run_as_admin:bool=False):
+def change_boot_order(is_force_run_as_admin:bool=False):
     '''
     Use Powershell script to change the boot order, set MegaOS as the first boot option.
     '''
@@ -15,7 +15,7 @@ def change_boot_order(is_run_as_admin:bool=False):
         return 6
 
     try:
-        if is_run_as_admin:
+        if is_force_run_as_admin:
         # Request admin privileges using Start-Process with -Verb RunAs
             ps_command = f"Start-Process powershell -ArgumentList '-ExecutionPolicy Bypass -File \"{bootorder_change_tool_path}\"' -Verb RunAs -WindowStyle Hidden -Wait"
         else:
@@ -28,9 +28,9 @@ def change_boot_order(is_run_as_admin:bool=False):
             creationflags=subprocess.CREATE_NO_WINDOW
         )
         
-        # Note: When running with Start-Process, we might not get the script's exit code directly
-        # checking result.returncode checks if the launch was successful.
-        # So it's not recommended you to use is_run_as_admin=True
+        # Note: When running with Start-Process, we might not get the script's exit code directly.
+        # checking result.returncode only checks if the launch was successful.
+        # So it's not recommended you to use is_force_run_as_admin=True.
         if result.returncode == 0:
             print("Run Success")
             print("Output:", result.stdout)

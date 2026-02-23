@@ -1,5 +1,7 @@
 # Localization: English
 
+# Contributors: Remik1r3n
+
 MENU_TRAY_TOOLTIP = "Open H3C System Control"
 MENU_TITLE = "Control Center"
 MENU_TOGGLE_MIC = "Toggle Microphone (F20)"
